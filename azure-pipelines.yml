@@ -29,15 +29,15 @@ jobs:
       - script: npm install
         displayName: 'INSTALL: launch npm install'
       - script: |
-          chmod +x ./ui/gradlew
-          ./ui/gradlew -p ui clean test integrationTest
+          chmod +x ./gradlew
+          ./gradlew clean test integrationTest
         displayName: 'TESTS: backend'
-      - script: ./ui/gradlew -p ui bootJar -Pprod -x test
+      - script: ./gradlew bootJar -Pprod -x test
         displayName: 'TESTS: packaging'
       #----------------------------------------------------------------------
       # Build
       #----------------------------------------------------------------------
-      - script: ./ui/gradlew -p ui bootJar -Pprod jibDockerBuild
+      - script: ./gradlew bootJar -Pprod jibDockerBuild
         displayName: 'BUILD: jibDockerBuild'
       - script: sudo docker image tag ui acrdevozs.azurecr.io/ui
         displayName: 'DOCKER: tag'
