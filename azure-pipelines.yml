@@ -1,0 +1,48 @@
+jobs:
+  - job: Test
+    pool:
+      vmui: 'Ubuntu 16.04'
+    variables:
+      NODE_VERSION: 10.16.0
+      SPRING_OUTPUT_ANSI_ENABLED: NEVER
+      SPRING_JPA_SHOW_SQL: false
+      JHI_DISABLE_WEBPACK_LOGS: true
+      NG_CLI_ANALYTICS: 'false'
+
+    steps:
+      #----------------------------------------------------------------------
+      # Install all tools and check configuration
+      #----------------------------------------------------------------------
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '10.16.0'
+        displayName: 'TOOLS: install Node.js'
+      - script: sudo npm install -g npm
+        displayName: 'TOOLS: update NPM'
+      - script: sudo chown -R vsts:docker /home/vsts/.npm/
+        displayName: 'BUGS-FIX: change /home/vsts/.npm/ permission'
+      - script: sudo /etc/init.d/mysql stop
+        displayName: 'TOOLS: stop MySQL'
+      #----------------------------------------------------------------------
+      # Tests
+      #----------------------------------------------------------------------
+      - script: npm install
+        displayName: 'INSTALL: launch npm install'
+      - script: |
+          chmod +x ./ui/gradlew
+          ./ui/gradlew -p ui clean test integrationTest
+        displayName: 'TESTS: backend'
+      - script: ./ui/gradlew -p ui bootJar -Pprod -x test
+        displayName: 'TESTS: packaging'
+      #----------------------------------------------------------------------
+      # Build
+      #----------------------------------------------------------------------
+      - script: ./ui/gradlew -p ui bootJar -Pprod jibDockerBuild
+        displayName: 'BUILD: jibDockerBuild'
+      - script: sudo docker image tag ui acrdevozs.azurecr.io/ui
+        displayName: 'DOCKER: tag'
+      - script: sudo docker login -u acrdevozs -p $(acrdevozspass) acrdevozs.azurecr.io
+        displayName: 'DOCKER: login'
+      - script: sudo docker push acrdevozs.azurecr.io/ui
+        displayName: 'DOCKER: push'
+        
