@@ -29,8 +29,8 @@ jobs:
       - script: npm install
         displayName: 'INSTALL: launch npm install'
       - script: |
-          chmod +x ./ui/gradlew
-          ./ui/gradlew -p ui clean test integrationTest
+          chmod +x ./gradlew
+          ./gradlew -p ui clean test integrationTest
         displayName: 'TESTS: backend'
       - script: ./ui/gradlew -p ui bootJar -Pprod -x test
         displayName: 'TESTS: packaging'
