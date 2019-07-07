@@ -45,4 +45,3 @@ jobs:
         displayName: 'DOCKER: login'
       - script: sudo docker push acrdevozs.azurecr.io/ui
         displayName: 'DOCKER: push'
-        
