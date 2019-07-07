@@ -45,10 +45,3 @@ jobs:
         displayName: 'DOCKER: login'
       - script: sudo docker push acrdevozs.azurecr.io/ui
         displayName: 'DOCKER: push'
-      #----------------------------------------------------------------------
-      # Publish
-      #----------------------------------------------------------------------
-      - task: PublishPipelineArtifact@1
-        inputs:
-          targetPath: '$(Pipeline.Workspace)/helm'
-          artifact: 'helm'
